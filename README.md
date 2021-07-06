@@ -2,7 +2,7 @@
 
 
 ------------------------------------------------
-step 1. cd server folder
+step 1. cd server folder <br>
 step 2. node index.js
 
 step 3. open another terminal
