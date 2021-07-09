@@ -51,7 +51,8 @@ function App() {
       data.nfctext
     Axios.get(BASE_URL).then((response) => {
       const content = response.data.result.input
-      const qmContent = hextoascii(content)
+      var contentQM = content.slice(-128, -36) //剔除合約中不重要部分
+      const qmContent = hextoascii(contentQM)
       console.log(qmContent)
       getipfs(qmContent)
     })
