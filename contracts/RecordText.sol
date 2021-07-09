@@ -24,7 +24,6 @@ contract RecordTextForever {
     //     writers.push(Writer(msg.sender, "Test", "ContractOwner", ContText)); //此行沒用純此行沒用純測試測試
 
     function RecordText(string memory text, string memory name) public {
-        //紀錄文address 文章內容 用戶名稱 文章編號
         ContText++;
         ArticleWriter[ContText] = msg.sender;
         ArticleContent[ContText] = text;

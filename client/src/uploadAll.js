@@ -1,7 +1,117 @@
+import React, { Component } from "react"
+
 var Web3 = require("web3") //引入WEB3
 let ethereum = window.ethereum //用ethereum API
 let web3 = window.web3
 var currentAccount = null
+
+const ipfsAPI = require("ipfs-api")
+const ipfs = ipfsAPI({ host: "localhost", port: "5001", protocol: "http" })
+
+let saveImageOnIpfs = (reader) => {
+  return new Promise(function (resolve, reject) {
+    const buffer = Buffer.from(reader.result)
+    ipfs
+      .add(buffer)
+      .then((response) => {
+        console.log(response)
+        resolve(response[0].hash)
+      })
+      .catch((err) => {
+        console.error(err)
+        reject(err)
+      })
+  })
+}
+
+class uploadAll extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      imgSrc: null,
+    }
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <h2>【證書IPFS上傳】</h2>
+        <div>
+          <label id="file">Choose file to upload</label>
+          <input
+            type="file"
+            ref="file"
+            id="file"
+            name="file"
+            multiple="multiple"
+          />
+        </div>
+        <div>
+          <button
+            onClick={() => {
+              var file = this.refs.file.files[0]
+              var reader = new FileReader()
+              // reader.readAsDataURL(file);
+              reader.readAsArrayBuffer(file)
+              reader.onloadend = (e) => {
+                console.log(reader)
+                // 上傳數據至IPFS
+                saveImageOnIpfs(reader).then((hash) => {
+                  console.log(hash)
+                  this.setState({ imgSrc: hash })
+                })
+              }
+            }}
+          >
+            上傳圖片
+          </button>
+        </div>
+        {this.state.imgSrc ? (
+          <div>
+            <h2>{"IPFS之hash值為 : " + this.state.imgSrc}</h2>
+            {/* <img
+              alt="網路失敗"
+              style={{
+                width: 1600,
+              }}
+              src={"localhost:8080/ipfs/" + this.state.imgSrc}
+            /> */}
+          </div>
+        ) : (
+          <img alt="" />
+        )}
+
+        <h4>商品ID("pId")：</h4>
+        <input
+          type="text"
+          name="pId"
+          id="word"
+          style={{ width: "600px" }}
+        ></input>
+        {/*之後QM要自動上傳*/}
+        <h4>IPFS HASH("QM")：</h4>
+        <input
+          type="text"
+          name="QM"
+          id="name"
+          value={this.state.imgSrc}
+          style={{ width: "600px" }}
+        ></input>
+        <h4>NFC ID("nfcuId")：</h4>
+        <input
+          type="text"
+          name="nfcuId"
+          id="nfcuId"
+          style={{ width: "600px" }}
+        ></input>
+        <br></br>
+        <button type="submit" onClick={getMoney}>
+          上傳資料庫&上傳ETH網路
+        </button>
+      </div>
+    )
+  }
+}
 
 if (typeof web3 !== "undefined") {
   ethereum.enable() //開啟METAMASK
@@ -113,25 +223,6 @@ var contract_abi = [
 ]
 myContract = new web3.eth.Contract(contract_abi, contract_address)
 
-function uploadEth() {
-  return (
-    <div>
-      精品防偽上鏈系統
-      <h4>商品ID("pId")：</h4>
-      <input type="text" name="pId" id="word"></input>
-      {/*之後QM要自動上傳*/}
-      <h4>IPFS HASH("QM")：</h4>
-      <input type="text" name="QM" id="name"></input>
-      <h4>NFC ID("nfcuId")：</h4>
-      <input type="text" name="nfcuId" id="nfcuId"></input>
-      <br></br>
-      <button type="submit" onClick={getMoney}>
-        輸入
-      </button>
-    </div>
-  )
-}
-
 async function getMoney() {
   var ID = document.getElementById("word").value
   var NM = document.getElementById("name").value
@@ -143,4 +234,4 @@ async function getMoney() {
     })
 }
 
-export default uploadEth
+export default uploadAll

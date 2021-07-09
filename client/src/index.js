@@ -3,6 +3,7 @@ import ReactDOM from "react-dom"
 import App from "./App"
 import Upload from "./upload"
 import uploadEth from "./uploadEth"
+import uploadAll from "./uploadAll"
 
 import { BrowserRouter, Route } from "react-router-dom"
 import reportWebVitals from "./reportWebVitals"
@@ -12,6 +13,7 @@ ReactDOM.render(
     <Route exact path="/" component={App}></Route>
     <Route path="/upload" component={Upload}></Route>
     <Route path="/uploadEth" component={uploadEth}></Route>
+    <Route path="/uploadAll" component={uploadAll}></Route>
   </BrowserRouter>,
   document.getElementById("root")
 )

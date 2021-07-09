@@ -63,13 +63,13 @@ class Upload extends Component {
         </div>
         {this.state.imgSrc ? (
           <div>
-            <h2>{"http://localhost:8080/ipfs/" + this.state.imgSrc}</h2>
+            <h2>{"localhost:8080/ipfs/" + this.state.imgSrc}</h2>
             <img
               alt="網路失敗"
               style={{
-                width: 1300,
+                width: 1600,
               }}
-              src={"http://localhost:8080/ipfs/" + this.state.imgSrc}
+              src={"localhost:8080/ipfs/" + this.state.imgSrc}
             />
           </div>
         ) : (
