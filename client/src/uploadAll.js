@@ -1,9 +1,13 @@
 import React, { Component } from "react"
+import axios from "axios"
+
+// import css from "./app.css"
 
 var Web3 = require("web3") //引入WEB3
 let ethereum = window.ethereum //用ethereum API
 let web3 = window.web3
 var currentAccount = null
+var tranHash = ""
 
 const ipfsAPI = require("ipfs-api")
 const ipfs = ipfsAPI({ host: "localhost", port: "5001", protocol: "http" })
@@ -109,6 +113,8 @@ class uploadAll extends Component {
         <button type="submit" onClick={getMoney}>
           上傳資料庫&上傳ETH網路
         </button>
+        <h2 id="tranHash"></h2>
+        <h2 id="tranHashLink"></h2>
       </div>
     )
   }
@@ -131,6 +137,21 @@ ethereum
   .catch((err) => {
     console.error(err)
   })
+
+//在页面未加载完毕之前显示的loading Html自定义内容
+var _LoadingHtml =
+  '<div id="loadingDiv" style="display: none; "><div id="over" style=" position: fixed;top: 0;left: 0; width: 100%;height: 100%; background-color: #f5f5f5;opacity:0.5;z-index: 1000;"></div><div id="layout" style="position: fixed;top: 40%; left: 40%;width: 20%; height: 20%;  z-index: 1001;text-align:center;"><img weight="50ew" height ="50eh" src="https://www.superiorlawncareusa.com/wp-content/uploads/2020/05/loading-gif-png-5.gif" /></div></div>'
+//loading效果
+document.write(_LoadingHtml)
+
+//移除
+function completeLoading() {
+  document.getElementById("loadingDiv").style.display = "none"
+}
+//展示loading效果
+function showLoading() {
+  document.getElementById("loadingDiv").style.display = "block"
+}
 
 function handleAccountsChanged(accounts) {
   if (accounts.length === 0) {
@@ -227,12 +248,40 @@ myContract = new web3.eth.Contract(contract_abi, contract_address)
 async function getMoney() {
   var ID = document.getElementById("word").value
   var NM = document.getElementById("name").value
+  var nfcuId = document.getElementById("nfcuId").value
   myContract.methods
     .RecordText(ID, NM)
     .send({ from: coinbase })
+    .then(showLoading())
     .then(function (receipt) {
-      alert("交易成功，紀錄文字")
+      completeLoading()
+      // alert("交易成功，紀錄文字")
+      console.log(receipt.transactionHash) //返回上筆交易ID
+      tranHash = receipt.transactionHash
+      printHash(receipt.transactionHash)
     })
+    .then(() => {
+      var pid = ID
+      console.log("nfcuId:" + nfcuId + "pid:" + pid + "tranHash:" + tranHash)
+      axios.post("http://localhost:3001/postEth", {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: "Bearer df498c83-1c88-308e-a224-5408dd67bb7f",
+        },
+        nfcuId: nfcuId,
+        tranHash: tranHash,
+        pid: pid,
+      })
+    })
+}
+
+//顯示交易hash值
+async function printHash(tranHash) {
+  document.getElementById("tranHash").innerHTML =
+    "ETH transaction Hash : " + tranHash + " (匯入NFC晶片) "
+  document.getElementById("tranHashLink").innerHTML =
+    "Link : https://rinkeby.etherscan.io/tx/" + tranHash
 }
 
 export default uploadAll
