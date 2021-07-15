@@ -1,10 +1,30 @@
 const express = require("express")
+var https = require("https")
 const app = express()
 const mysql = require("mysql")
 const cors = require("cors")
+var FileReader = require("filereader")
+
+var fs = require("fs")
+var keyPath = "./private.key"
+var certPath = "./certificate.pem"
+var hskey = fs.readFileSync(keyPath)
+var hscert = fs.readFileSync(certPath)
+
+const ipfsAPI = require("ipfs-api")
+const ipfs = ipfsAPI({ host: "localhost", port: "5001", protocol: "http" })
 
 app.use(cors())
+app.use(express.json({ limit: "210000kb" }))
 app.use(express.json())
+
+var server = https.createServer(
+  {
+    key: hskey,
+    cert: hscert,
+  },
+  app
+)
 
 const db = mysql.createConnection({
   user: "team",
@@ -24,6 +44,7 @@ app.post("/getnfc", (req, res) => {
         console.log(err)
       } else {
         res.send(result)
+        console.log("Secess")
       }
     }
   )
@@ -46,6 +67,43 @@ app.post("/postEth", (req, res) => {
   })
 })
 
-app.listen(3001, () => {
-  console.log("server is running n port 3001")
+// let saveImageOnIpfs = (reader) => {
+//   return new Promise(function (resolve, reject) {
+//     const buffer = Buffer.from(reader)
+//     // const buffer = Buffer.from(reader.result)
+//     ipfs
+//       .add(buffer)
+//       .then((response) => {
+//         console.log(response)
+//         resolve(response[0].hash)
+//       })
+//       .catch((err) => {
+//         console.error(err)
+//         reject(err)
+//       })
+//   })
+// }
+
+app.post("/postIPFS", (req, res) => {
+  // console.log(req);
+  const buffer = req.body.buffer
+  console.log(buffer)
+  const Bufferx = Buffer.from(buffer)
+  return new Promise(function (resolve, reject) {
+    ipfs
+      .add(Bufferx)
+      .then((response) => {
+        console.log(response)
+        res.send(response)
+        // resolve(response[0].hash)
+      })
+      .catch((err) => {
+        console.error(err)
+        // reject(err)
+      })
+  })
+})
+
+server.listen(3011, () => {
+  console.log("server is running n port 3011")
 })

@@ -27,7 +27,12 @@ function App() {
     ) {
       document.getElementById("uidempty").innerHTML = ""
       document.getElementById("contentempty").innerHTML = ""
-      Axios.post("http://localhost:3001/getnfc", {
+      Axios.post("https://140.117.71.141:3011/getnfc", {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: "Bearer df498c83-1c88-308e-a224-5408dd67bb7f",
+        },
         uid: uid,
         content: content,
       })

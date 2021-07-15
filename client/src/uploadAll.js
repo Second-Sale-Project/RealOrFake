@@ -15,11 +15,14 @@ const ipfs = ipfsAPI({ host: "localhost", port: "5001", protocol: "http" })
 let saveImageOnIpfs = (reader) => {
   return new Promise(function (resolve, reject) {
     const buffer = Buffer.from(reader.result)
-    ipfs
-      .add(buffer)
+    console.log(buffer)
+    axios
+      .post("https://140.117.71.141:3011/postIPFS", {
+        buffer: buffer,
+      })
       .then((response) => {
-        console.log(response)
-        resolve(response[0].hash)
+        console.log("success")
+        resolve(response.data[0].hash)
       })
       .catch((err) => {
         console.error(err)
@@ -47,19 +50,17 @@ class uploadAll extends Component {
             ref="file"
             id="file"
             name="file"
-            multiple="multiple"
+            // multiple="multiple"
           />
         </div>
         <div>
           <button
             onClick={() => {
-              var file = this.refs.file.files[0]
+              var file = this.refs.file.files[0] //讀取INPUT FILE
               var reader = new FileReader()
-              // reader.readAsDataURL(file);
               reader.readAsArrayBuffer(file)
               reader.onloadend = (e) => {
                 console.log(reader)
-                // 上傳數據至IPFS
                 saveImageOnIpfs(reader).then((hash) => {
                   console.log(hash)
                   this.setState({ imgSrc: hash })
@@ -263,7 +264,7 @@ async function getMoney() {
     .then(() => {
       var pid = ID
       console.log("nfcuId:" + nfcuId + "pid:" + pid + "tranHash:" + tranHash)
-      axios.post("http://localhost:3001/postEth", {
+      axios.post("https://140.117.71.141:3011/postEth", {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
