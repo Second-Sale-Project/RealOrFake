@@ -12,21 +12,21 @@ var tranHash = ""
 const ipfsAPI = require("ipfs-api")
 const ipfs = ipfsAPI({ host: "localhost", port: "5001", protocol: "http" })
 
-let saveImageOnIpfs = (reader) => {
-  return new Promise(function (resolve, reject) {
-    const buffer = Buffer.from(reader.result)
-    console.log(buffer)
-    axios
-      .post("https://140.117.71.141:3011/postIPFS", {
-        buffer: buffer,
+let saveImageOnIpfs = (reader) => { 
+  return new Promise(function (resolve, reject) { 
+    const buffer = Buffer.from(reader.result) //將reader內file值轉換為buffer
+    console.log(buffer) //console檢查buffer是否有誤
+    axios //axios將後續作業傳輸至後端server進行運算與作業
+      .post("https://140.117.71.141:3011/postIPFS", { //server地址(web api)
+        buffer: buffer, //將轉換後至buffer傳輸過去
       })
       .then((response) => {
-        console.log("success")
-        resolve(response.data[0].hash)
+        console.log("success") //後端作業如正確執行顯示成功
+        resolve(response.data[0].hash) //返回該筆交易雜湊值hash
       })
       .catch((err) => {
-        console.error(err)
-        reject(err)
+        console.error(err) //後端作業如失敗顯示失敗訊息
+        reject(err) 
       })
   })
 }
@@ -56,14 +56,14 @@ class uploadAll extends Component {
         <div>
           <button
             onClick={() => {
-              var file = this.refs.file.files[0] //讀取INPUT FILE
-              var reader = new FileReader()
-              reader.readAsArrayBuffer(file)
-              reader.onloadend = (e) => {
-                console.log(reader)
-                saveImageOnIpfs(reader).then((hash) => {
+              var file = this.refs.file.files[0] //讀取input file
+              var reader = new FileReader() //FileReader 非同步讀取file餒榮
+              reader.readAsArrayBuffer(file) //將file內容儲存至buffer緩存
+              reader.onloadend = (e) => { 
+                console.log(reader) //console檢查讀取內容
+                saveImageOnIpfs(reader).then((hash) => { //將reader內容傳參至saveImageOnIpfs函數
                   console.log(hash)
-                  this.setState({ imgSrc: hash })
+                  this.setState({ imgSrc: hash }) //獲取乙太坊網路該筆交易雜湊值Hash
                 })
               }
             }}
@@ -166,7 +166,7 @@ function setAccount() {
   coinbase = currentAccount
 }
 
-var myContract
+var myContract 
 var coinbase
 var contract_address = "0xb2CD1185B0ad018c305a932da70405C50aE9d4cB" //合約位置
 var contract_abi = [
@@ -243,28 +243,28 @@ var contract_abi = [
     name: "Record",
     type: "event",
   },
-]
-myContract = new web3.eth.Contract(contract_abi, contract_address)
+] //寫入智能合約內容ABI
+myContract = new web3.eth.Contract(contract_abi, contract_address) //define合約
 
 async function getMoney() {
-  var ID = document.getElementById("word").value
+  var ID = document.getElementById("word").value 
   var NM = document.getElementById("name").value
   var nfcuId = document.getElementById("nfcuId").value
   myContract.methods
-    .RecordText(ID, NM)
-    .send({ from: coinbase })
-    .then(showLoading())
+    .RecordText(ID, NM) //紀錄ID及NM 
+    .send({ from: coinbase }) //傳送數據
+    .then(showLoading()) //LOADING上鏈特效
     .then(function (receipt) {
-      completeLoading()
+      completeLoading() //結束LOADING上鏈特效
       // alert("交易成功，紀錄文字")
-      console.log(receipt.transactionHash) //返回上筆交易ID
+      console.log(receipt.transactionHash) //返回上筆乙太坊交易ID
       tranHash = receipt.transactionHash
       printHash(receipt.transactionHash)
     })
     .then(() => {
       var pid = ID
       console.log("nfcuId:" + nfcuId + "pid:" + pid + "tranHash:" + tranHash)
-      axios.post("https://140.117.71.141:3011/postEth", {
+      axios.post("https://140.117.71.141:3011/postEth", { //將資料同步儲存至後端資料庫
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",

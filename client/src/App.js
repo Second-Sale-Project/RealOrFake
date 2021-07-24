@@ -49,33 +49,33 @@ function App() {
     }
   }
 
-  const getEther = (data) => {
+  const getEther = (data) => { //利用ETHERSCAN API獲取資訊
     console.log(data.nfctext)
     const BASE_URL =
       "https://api-rinkeby.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=" +
       data.nfctext
     Axios.get(BASE_URL).then((response) => {
-      const content = response.data.result.input
+      const content = response.data.result.input 
       var contentQM = content.slice(-128, -36) //剔除合約中不重要部分
-      const qmContent = hextoascii(contentQM)
+      const qmContent = hextoascii(contentQM) //得到加密QM值
       console.log(qmContent)
-      getipfs(qmContent)
+      getipfs(qmContent) //將QM傳參到getipfs函式處理
     })
   }
 
-  //change hex to ascii
+  //change hex to ascii 轉換合約內容近制
   const hextoascii = (content) => {
     var hex1 = content.toString()
     var hex = hex1.replace(/0x/g, "") //delete 0x number
     var str = ""
     for (var i = 0; i < hex.length; i += 2)
-      str += String.fromCharCode(parseInt(hex.substr(i, 2), 16))
+      str += String.fromCharCode(parseInt(hex.substr(i, 2), 16)) //文字處理合約不必要冗贅內容
     return str
   }
 
   const getipfs = (QM) => {
     //via IPFS api to get pic
-    var imgurl = "https://ipfs.io/ipfs/" + QM
+    var imgurl = "https://ipfs.io/ipfs/" + QM //獲取IPFS圖片
     document.getElementById("pic").innerHTML =
       '<img src="' + imgurl + '" height="99%" weight="99%"">'
   }

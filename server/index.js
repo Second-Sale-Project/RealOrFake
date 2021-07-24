@@ -67,38 +67,23 @@ app.post("/postEth", (req, res) => {
   })
 })
 
-// let saveImageOnIpfs = (reader) => {
-//   return new Promise(function (resolve, reject) {
-//     const buffer = Buffer.from(reader)
-//     // const buffer = Buffer.from(reader.result)
-//     ipfs
-//       .add(buffer)
-//       .then((response) => {
-//         console.log(response)
-//         resolve(response[0].hash)
-//       })
-//       .catch((err) => {
-//         console.error(err)
-//         reject(err)
-//       })
-//   })
-// }
-
+const ipfsAPI = require("ipfs-api") //使用ipfs api
+const ipfs = ipfsAPI({ host: "localhost", port: "5001", protocol: "http" }) //建立ipfs結點
 app.post("/postIPFS", (req, res) => {
   // console.log(req);
-  const buffer = req.body.buffer
+  const buffer = req.body.buffer //提取參數中的buffer
   console.log(buffer)
-  const Bufferx = Buffer.from(buffer)
+  const Bufferx = Buffer.from(buffer) //建立緩衝區
   return new Promise(function (resolve, reject) {
     ipfs
-      .add(Bufferx)
-      .then((response) => {
-        console.log(response)
-        res.send(response)
+      .add(Bufferx) //ipfs函式之上傳buffer
+      .then((response) => { 
+        console.log(response) //顯示上傳後ipfs返回之雜湊值
+        res.send(response) //將此雜湊值返回前端顯示
         // resolve(response[0].hash)
       })
       .catch((err) => {
-        console.error(err)
+        console.error(err) //錯誤顯示
         // reject(err)
       })
   })
