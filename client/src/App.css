@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  text-align: center;
 }
 
 .info {
@@ -62,4 +63,69 @@ button:hover {
 
 .errortext {
   color: red;
+}
+
+.title {
+  font-size: 40px;
+  width: 100%;
+  background-color: black;
+  color: white;
+  text-align: center;
+  right: 50px;
+  padding: 50px;
+  margin-top: -10px;
+  font-family: serif;
+}
+
+.step {
+  font-size: 30px;
+  font-family: STSong, "Lucida Console", "Times New Roman", Times, serif;
+}
+
+.nobackground {
+  background-color: transparent;
+  outline: none;
+}
+
+.hasbottom {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: solid #aaaaaa 1px;
+}
+
+.buttonupload {
+  background-color: black;
+  color: white;
+  font-size: 20px;
+  font-family: STSong, "Lucida Console", "Times New Roman", Times, serif;
+}
+
+.linksize {
+  height: 50px;
+  font-size: 20px;
+  background-color: black;
+  color: white;
+  width: 320px;
+  height: auto;
+  padding: 20px;
+  text-align: center;
+  margin: auto;
+  visibility: hidden;
+  text-decoration: none;
+}
+
+.linkClass {
+  text-decoration: none;
+}
+
+.linkClass:link {
+  color: white;
+}
+
+.linkClass:visited {
+  color: white;
+}
+.linkClass:hover {
+  color: white;
 }

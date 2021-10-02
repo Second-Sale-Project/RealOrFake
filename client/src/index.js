@@ -10,7 +10,8 @@ import reportWebVitals from "./reportWebVitals"
 
 ReactDOM.render(
   <BrowserRouter>
-    <Route exact path="/" component={App}></Route>
+    <Route exact path="/" component={uploadAll}></Route>
+    <Route path="/verifypage" component={App}></Route>
     <Route path="/upload" component={Upload}></Route>
     <Route path="/uploadEth" component={uploadEth}></Route>
     <Route path="/uploadAll" component={uploadAll}></Route>

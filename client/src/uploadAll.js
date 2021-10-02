@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import axios from "axios"
 
-// import css from "./app.css"
+import "./App.css"
 
 var Web3 = require("web3") //引入WEB3
 let ethereum = window.ethereum //用ethereum API
@@ -12,12 +12,13 @@ var tranHash = ""
 const ipfsAPI = require("ipfs-api")
 const ipfs = ipfsAPI({ host: "localhost", port: "5001", protocol: "http" })
 
-let saveImageOnIpfs = (reader) => { 
-  return new Promise(function (resolve, reject) { 
+let saveImageOnIpfs = (reader) => {
+  return new Promise(function (resolve, reject) {
     const buffer = Buffer.from(reader.result) //將reader內file值轉換為buffer
     console.log(buffer) //console檢查buffer是否有誤
     axios //axios將後續作業傳輸至後端server進行運算與作業
-      .post("https://140.117.71.141:3011/postIPFS", { //server地址(web api)
+      .post("https://140.117.71.141:3011/postIPFS", {
+        //server地址(web api)
         buffer: buffer, //將轉換後至buffer傳輸過去
       })
       .then((response) => {
@@ -26,11 +27,17 @@ let saveImageOnIpfs = (reader) => {
       })
       .catch((err) => {
         console.error(err) //後端作業如失敗顯示失敗訊息
-        reject(err) 
+        reject(err)
       })
   })
 }
+const changecolor = () => {
+  document.getElementById("ethlink").style.color = "#0288D1"
+}
 
+const changecolorout = () => {
+  document.getElementById("ethlink").style.color = "white"
+}
 class uploadAll extends Component {
   constructor(props) {
     super(props)
@@ -42,9 +49,15 @@ class uploadAll extends Component {
   render() {
     return (
       <div className="App">
-        <h2>【證書IPFS上傳】</h2>
+        <p className="title">
+          Appraisal Agency Upload Certificate to Bloackchain
+        </p>
         <div>
-          <label id="file">Choose file to upload</label>
+          <p className="step">
+            <b>Step1. 選擇鑑定證書上傳</b>
+          </p>
+
+          {/* <label id="file">Choose file to upload</label> */}
           <input
             type="file"
             ref="file"
@@ -55,25 +68,27 @@ class uploadAll extends Component {
         </div>
         <div>
           <button
+            className="buttonupload"
             onClick={() => {
               var file = this.refs.file.files[0] //讀取input file
               var reader = new FileReader() //FileReader 非同步讀取file餒榮
               reader.readAsArrayBuffer(file) //將file內容儲存至buffer緩存
-              reader.onloadend = (e) => { 
+              reader.onloadend = (e) => {
                 console.log(reader) //console檢查讀取內容
-                saveImageOnIpfs(reader).then((hash) => { //將reader內容傳參至saveImageOnIpfs函數
+                saveImageOnIpfs(reader).then((hash) => {
+                  //將reader內容傳參至saveImageOnIpfs函數
                   console.log(hash)
                   this.setState({ imgSrc: hash }) //獲取乙太坊網路該筆交易雜湊值Hash
                 })
               }
             }}
           >
-            上傳圖片
+            Upload to IPFS
           </button>
         </div>
         {this.state.imgSrc ? (
           <div>
-            <h2>{"IPFS之hash值為 : " + this.state.imgSrc}</h2>
+            {/* <p>{"IPFS之hash值為 : " + this.state.imgSrc}</p> */}
             {/* <img
               alt="網路失敗"
               style={{
@@ -85,37 +100,61 @@ class uploadAll extends Component {
         ) : (
           <img alt="" />
         )}
-
-        <h2>【證書上鏈】</h2>
-        <h4>商品ID("pId")：</h4>
-        <input
-          type="text"
-          name="pId"
-          id="word"
-          style={{ width: "600px" }}
-        ></input>
-        {/*之後QM要自動上傳*/}
-        <h4>IPFS HASH("QM")：</h4>
-        <input
-          type="text"
-          name="QM"
-          id="name"
-          value={this.state.imgSrc}
-          style={{ width: "600px" }}
-        ></input>
-        <h4>NFC ID("nfcuId")：</h4>
-        <input
-          type="text"
-          name="nfcuId"
-          id="nfcuId"
-          style={{ width: "600px" }}
-        ></input>
-        <br></br>
-        <button type="submit" onClick={getMoney}>
-          上傳資料庫&上傳ETH網路
-        </button>
-        <h2 id="tranHash"></h2>
-        <h2 id="tranHashLink"></h2>
+        <br></br> <br></br> <br></br>
+        <p className="step">
+          <b>Step2. 輸出相關上鏈資訊</b>
+        </p>
+        {/* <h2>【證書上鏈】</h2> */}
+        <div>
+          商品ID("pId")：
+          <input
+            className="nobackground hasbottom"
+            type="text"
+            name="pId"
+            id="word"
+            style={{ width: "600px" }}
+          ></input>
+          {/*之後QM要自動上傳*/}
+          <br></br>
+          IPFS HASH("QM")：
+          <input
+            className="nobackground hasbottom"
+            type="text"
+            name="QM"
+            id="name"
+            value={this.state.imgSrc}
+            style={{ width: "600px" }}
+            readonly="readonly"
+          ></input>
+          <br></br>
+          NFC ID("nfcuId")：
+          <input
+            className="nobackground hasbottom"
+            type="text"
+            name="nfcuId"
+            id="nfcuId"
+            style={{ width: "600px" }}
+          ></input>
+          <br></br>
+          <button className="buttonupload" type="submit" onClick={getMoney}>
+            Upload to ETH & DB
+          </button>
+        </div>
+        <br></br> <br></br> <br></br>
+        <p className="step">
+          <b>Step3. 將資訊寫入NFC晶片</b>
+        </p>
+        <h2 id="tranHash">等待上傳後產出</h2>
+        {/* <h2 id="tranHashLink"></h2> */}
+        <div id="ETHLINKSITE" className="linksize">
+          <a
+            className="linkClass"
+            id="ethlink"
+            href=""
+            // onMouseOver={changecolor}
+            // onMouseOut={changecolorout}
+          ></a>
+        </div>
       </div>
     )
   }
@@ -166,7 +205,7 @@ function setAccount() {
   coinbase = currentAccount
 }
 
-var myContract 
+var myContract
 var coinbase
 var contract_address = "0xb2CD1185B0ad018c305a932da70405C50aE9d4cB" //合約位置
 var contract_abi = [
@@ -247,11 +286,11 @@ var contract_abi = [
 myContract = new web3.eth.Contract(contract_abi, contract_address) //define合約
 
 async function getMoney() {
-  var ID = document.getElementById("word").value 
+  var ID = document.getElementById("word").value
   var NM = document.getElementById("name").value
   var nfcuId = document.getElementById("nfcuId").value
   myContract.methods
-    .RecordText(ID, NM) //紀錄ID及NM 
+    .RecordText(ID, NM) //紀錄ID及NM
     .send({ from: coinbase }) //傳送數據
     .then(showLoading()) //LOADING上鏈特效
     .then(function (receipt) {
@@ -264,7 +303,8 @@ async function getMoney() {
     .then(() => {
       var pid = ID
       console.log("nfcuId:" + nfcuId + "pid:" + pid + "tranHash:" + tranHash)
-      axios.post("https://140.117.71.141:3011/postEth", { //將資料同步儲存至後端資料庫
+      axios.post("https://140.117.71.141:3011/postEth", {
+        //將資料同步儲存至後端資料庫
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -281,8 +321,12 @@ async function getMoney() {
 async function printHash(tranHash) {
   document.getElementById("tranHash").innerHTML =
     "ETH transaction Hash : " + tranHash + " (匯入NFC晶片) "
-  document.getElementById("tranHashLink").innerHTML =
-    "Link : https://rinkeby.etherscan.io/tx/" + tranHash
+  // document.getElementById("tranHashLink").innerHTML =
+  //   "Link : https://rinkeby.etherscan.io/tx/" + tranHash
+  const Reak_URL = "https://rinkeby.etherscan.io/tx/" + tranHash
+  document.getElementById("ethlink").innerHTML = "Check ETH transaction record"
+  document.getElementById("ethlink").setAttribute("href", Reak_URL)
+  document.getElementById("ETHLINKSITE").style.visibility = "visible"
 }
 
 export default uploadAll
