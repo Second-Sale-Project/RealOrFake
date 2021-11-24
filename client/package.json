@@ -23,7 +23,7 @@
     "web3": "^1.4.0"
   },
   "scripts": {
-    "start": "set HTTPS=true&&react-scripts start",
+    "start": "set port=3550 &&set HTTPS=false&&react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
