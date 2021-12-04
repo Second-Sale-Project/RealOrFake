@@ -12,7 +12,11 @@ var hskey = fs.readFileSync(keyPath)
 var hscert = fs.readFileSync(certPath)
 
 const ipfsAPI = require("ipfs-api")
-const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "http" })
+const ipfs = ipfsAPI({
+  host: "ipfs.infura.io",
+  port: "5001",
+  protocol: "https",
+})
 
 app.use(cors())
 app.use(express.json({ limit: "210000kb" }))
@@ -77,7 +81,7 @@ app.post("/postIPFS", (req, res) => {
   return new Promise(function (resolve, reject) {
     ipfs
       .add(Bufferx) //ipfs函式之上傳buffer
-      .then((response) => { 
+      .then((response) => {
         console.log(response) //顯示上傳後ipfs返回之雜湊值
         res.send(response) //將此雜湊值返回前端顯示
         // resolve(response[0].hash)
