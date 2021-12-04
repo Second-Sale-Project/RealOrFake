@@ -12,7 +12,7 @@ var hskey = fs.readFileSync(keyPath)
 var hscert = fs.readFileSync(certPath)
 
 const ipfsAPI = require("ipfs-api")
-const ipfs = ipfsAPI({ host: "localhost", port: "5001", protocol: "http" })
+const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "http" })
 
 app.use(cors())
 app.use(express.json({ limit: "210000kb" }))
