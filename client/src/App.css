@@ -23,7 +23,7 @@ input {
 button {
   width: 320px;
   height: 50px;
-  margin-top: 20px;
+  margin-top: 20px !important;
 }
 
 button:hover {
@@ -128,4 +128,11 @@ button:hover {
 }
 .linkClass:hover {
   color: white;
+}
+
+.isOksign {
+  height: 50px;
+  width: 50px;
+  float: left;
+  margin-left: 10%;
 }
